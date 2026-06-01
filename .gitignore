@@ -47,4 +47,18 @@ coverage/
 # Turbopack / Next.js cache
 .turbo/
 .cache/
-frontend/.next/cache/
+frontend/.next/
+
+# ChromaDB runtime data
+bypassevo_chroma_db/
+
+# TypeScript build info
+*.tsbuildinfo
+
+# IDE
+.vscode/
+.idea/
+
+# OS files
+.DS_Store
+Thumbs.db
