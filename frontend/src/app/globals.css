@@ -1,0 +1,253 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* ── Base ─────────────────────────────────────────────────────────── */
+
+:root {
+  --bg: #050505;
+  --card: rgba(10, 10, 15, 0.85);
+  --border: rgba(0, 255, 157, 0.12);
+  --neon: #00ff9d;
+  --purple: #ff00ff;
+  --red: #ff0044;
+  --blue: #3b82f6;
+  --dim: #6b7280;
+  --text: #e0e0e0;
+  --glow-neon: 0 0 8px rgba(0, 255, 157, 0.15);
+  --glow-purple: 0 0 8px rgba(255, 0, 255, 0.15);
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: "Noto Sans SC", "Microsoft YaHei", sans-serif;
+  overflow-x: hidden;
+  min-height: 100vh;
+}
+
+/* ── Scrollbar ────────────────────────────────────────────────────── */
+
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: rgba(0, 255, 157, 0.2);
+  border-radius: 3px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(0, 255, 157, 0.4);
+}
+
+/* ── Glass Card ───────────────────────────────────────────────────── */
+
+.glass {
+  background: linear-gradient(
+    135deg,
+    rgba(10, 10, 15, 0.9),
+    rgba(15, 15, 25, 0.8)
+  );
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  backdrop-filter: blur(8px);
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.4),
+    inset 0 1px 0 rgba(255, 255, 255, 0.02);
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.glass:hover {
+  border-color: rgba(0, 255, 157, 0.18);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.6), 0 0 8px rgba(0, 255, 157, 0.08);
+}
+
+/* ── Neon Title ───────────────────────────────────────────────────── */
+
+.neon-title {
+  font-family: "JetBrains Mono", monospace;
+  font-weight: 700;
+  background: linear-gradient(90deg, #00ff9d, #00d4aa, #3b82f6);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  filter: drop-shadow(0 0 12px rgba(0, 255, 157, 0.25));
+  letter-spacing: 4px;
+  position: relative;
+}
+
+/* ── Status Badge ─────────────────────────────────────────────────── */
+
+.badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 16px;
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: 700;
+  font-family: "JetBrains Mono", monospace;
+  letter-spacing: 1px;
+}
+
+.badge-idle {
+  background: rgba(107, 114, 128, 0.15);
+  color: #6b7280;
+  border: 1px solid #374151;
+}
+
+.badge-run {
+  background: rgba(0, 255, 157, 0.1);
+  color: #00ff9d;
+  border: 1px solid rgba(0, 255, 157, 0.3);
+  animation: pulse-neon 2s infinite;
+}
+
+.badge-success {
+  background: rgba(255, 0, 68, 0.1);
+  color: #ff0044;
+  border: 1px solid rgba(255, 0, 68, 0.3);
+}
+
+.badge-done {
+  background: rgba(255, 0, 255, 0.1);
+  color: #ff00ff;
+  border: 1px solid rgba(255, 0, 255, 0.3);
+}
+
+@keyframes pulse-neon {
+  0%,
+  100% {
+    box-shadow: 0 0 4px rgba(0, 255, 157, 0.15);
+  }
+  50% {
+    box-shadow: 0 0 12px rgba(0, 255, 157, 0.3);
+  }
+}
+
+/* ── Typing Effect ────────────────────────────────────────────────── */
+
+.typing-cursor::after {
+  content: "█";
+  animation: blink 1s step-end infinite;
+  color: var(--neon);
+}
+
+@keyframes blink {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0;
+  }
+}
+
+/* ── Log Panel ────────────────────────────────────────────────────── */
+
+.log-line {
+  font-family: "JetBrains Mono", monospace;
+  font-size: 13px;
+  line-height: 1.8;
+  padding: 1px 0;
+}
+
+.log-recon {
+  color: #ff00ff;
+}
+.log-waf {
+  color: #fbbf24;
+}
+.log-generate {
+  color: #00ff9d;
+}
+.log-execute {
+  color: #60a5fa;
+}
+.log-ga {
+  color: #fb923c;
+}
+.log-rag {
+  color: #818cf8;
+}
+.log-success {
+  color: #34d399;
+  font-weight: 700;
+}
+.log-exploit-success {
+  color: #34d399;
+  font-weight: 800;
+  background: linear-gradient(90deg, rgba(52, 211, 153, 0.06), transparent);
+  padding: 2px 0;
+  border-left: 2px solid #34d399;
+  padding-left: 6px;
+}
+.log-blocked {
+  color: #f87171;
+  font-weight: 700;
+}
+.log-bypass {
+  color: #fde047;
+  font-weight: 700;
+}
+.log-warning {
+  color: #fb923c;
+  font-weight: 600;
+}
+.log-low-fitness {
+  color: #f97316;
+  font-weight: 600;
+}
+.log-error {
+  color: #ef4444;
+}
+.log-system {
+  color: #3b82f6;
+}
+.log-default {
+  color: #9ca3af;
+}
+
+/* ── Fitness Bar ──────────────────────────────────────────────────── */
+
+.fitness-bar {
+  height: 6px;
+  border-radius: 3px;
+  background: #1a1a2e;
+  overflow: hidden;
+}
+
+.fitness-bar-fill {
+  height: 100%;
+  border-radius: 3px;
+  background: linear-gradient(90deg, #00ff9d, #ff00ff);
+  transition: width 0.5s ease;
+}
+
+/* ── Recharts override ────────────────────────────────────────────── */
+
+.recharts-cartesian-grid-horizontal line,
+.recharts-cartesian-grid-vertical line {
+  stroke: #141414 !important;
+}
+
+.recharts-text {
+  fill: #6b7280 !important;
+  font-family: "JetBrains Mono", monospace !important;
+  font-size: 11px !important;
+}

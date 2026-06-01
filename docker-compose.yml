@@ -1,0 +1,107 @@
+version: "3.9"
+
+# ═══════════════════════════════════════════════════════════════════════
+# BypassEvo v3.0 — AI-Driven WAF Bypass Research & Exploit Framework
+#
+# Services:
+#   backend   - FastAPI + LangGraph attack engine
+#   frontend  - Next.js 14 cyberpunk UI
+#   dvwa      - Damn Vulnerable Web Application (target)
+#   coraza    - Coraza WAF with OWASP CRS (Paranoia Level 1-4)
+# ═══════════════════════════════════════════════════════════════════════
+
+services:
+  # ── BypassEvo Backend ──────────────────────────────────────────────────
+  backend:
+    build:
+      context: .
+      dockerfile: Dockerfile.backend
+    ports:
+      - "8000:8000"
+    volumes:
+      - .:/app
+      - bypassevo_chroma_db:/app/bypassevo_chroma_db
+    environment:
+      - PYTHONUNBUFFERED=1
+    depends_on:
+      - dvwa
+      - coraza-pl1
+    networks:
+      - bypassevo-net
+    restart: unless-stopped
+
+  # ── BypassEvo Frontend ─────────────────────────────────────────────────
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    ports:
+      - "3000:3000"
+    environment:
+      - NEXT_PUBLIC_API_URL=http://backend:8000
+      - NEXT_PUBLIC_WS_URL=ws://backend:8000/ws
+    depends_on:
+      - backend
+    networks:
+      - bypassevo-net
+    restart: unless-stopped
+
+  # ── DVWA (Target) ───────────────────────────────────────────────────
+  dvwa:
+    image: vulnerables/web-dvwa:latest
+    ports:
+      - "8080:80"
+    environment:
+      - MYSQL_PASS=dvwa
+    networks:
+      - bypassevo-net
+    restart: unless-stopped
+
+  # ── Coraza WAF (Paranoia Level 1 — default) ────────────────────────
+  coraza-pl1:
+    image: corazawaf/coraza:v3
+    ports:
+      - "9081:8080"
+    volumes:
+      - ./waf-config/coraza-pl1.conf:/etc/coraza/coraza.conf
+      - ./waf-config/crs:/etc/coraza/crs
+    environment:
+      - CORAZA_PARANOIA_LEVEL=1
+    networks:
+      - bypassevo-net
+    restart: unless-stopped
+
+  # ── Coraza WAF (Paranoia Level 3 — stricter) ───────────────────────
+  coraza-pl3:
+    image: corazawaf/coraza:v3
+    ports:
+      - "9083:8080"
+    volumes:
+      - ./waf-config/coraza-pl3.conf:/etc/coraza/coraza.conf
+      - ./waf-config/crs:/etc/coraza/crs
+    environment:
+      - CORAZA_PARANOIA_LEVEL=3
+    networks:
+      - bypassevo-net
+    restart: unless-stopped
+
+  # ── Coraza WAF (Paranoia Level 5 — maximum) ────────────────────────
+  coraza-pl5:
+    image: corazawaf/coraza:v3
+    ports:
+      - "9085:8080"
+    volumes:
+      - ./waf-config/coraza-pl5.conf:/etc/coraza/coraza.conf
+      - ./waf-config/crs:/etc/coraza/crs
+    environment:
+      - CORAZA_PARANOIA_LEVEL=5
+    networks:
+      - bypassevo-net
+    restart: unless-stopped
+
+networks:
+  bypassevo-net:
+    driver: bridge
+
+volumes:
+  bypassevo_chroma_db:

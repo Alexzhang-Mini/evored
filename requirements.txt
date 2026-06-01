@@ -1,0 +1,16 @@
+# BypassEvo v4.0 - AI-Driven WAF Bypass Research & Exploit Framework
+langgraph>=0.2.0
+requests>=2.31.0
+openai>=1.10.0
+httpx>=0.25.0
+chromadb>=0.4.0,<1.0.0
+beautifulsoup4>=4.12.0
+
+# FastAPI backend
+fastapi>=0.115.0
+uvicorn[standard]>=0.32.0
+websockets>=13.0
+pydantic>=2.0.0
+
+# Online WAF bypass research
+ddgs>=8.0.0
