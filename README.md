@@ -36,17 +36,16 @@ Autonomous two-stage attack pipeline: **WAF Bypass** (discover evasion technique
 
 **Stage 2** takes a confirmed bypass payload and optimizes it for actual exploitation (SQLi extraction, XSS execution, command injection). Only entered after bypass verification (anti-false-positive re-testing).
 
-## Rate Limit System
+## Key Features
 
-Per-stage rate limiting with exponential backoff and smart jitter:
-
-| Feature | Description |
-|---|---|
-| **Exponential Backoff** | On 429/block: `delay * multiplier^level`, capped at `max_backoff` |
-| **Smart Jitter** | Uniform (legacy) or Gaussian distribution `[base*0.6, base*1.4]` |
-| **Per-Stage Config** | Bypass stage can be aggressive, Exploit stage conservative |
-| **Real-time Visualization** | Current delay, backoff level, consecutive blocks shown in UI |
-| **Config Persistence** | Settings saved to localStorage, restored on reload |
+- **Hypothesis-Driven Bypass**: LLM generates bypass hypotheses, GA explores within each hypothesis space
+- **WAF Block Analysis**: Binary search + boundary probes + LLM rule inference
+- **Genetic Algorithm Engine**: Crossover, tournament selection, WAF-aware mutation weights
+- **RAG Memory**: ChromaDB-based knowledge persistence for attack patterns
+- **Rate Limiting**: Exponential backoff with smart jitter per-stage
+- **Behavioral Stealth**: Decoy requests, UA rotation, payload shuffling
+- **Web Search Integration**: Automatic lookup of known WAF bypass techniques
+- **Proxy Integration**: Burp Suite and OWASP ZAP support
 
 ## Quick Start
 
@@ -165,7 +164,12 @@ evored/
 │   ├── waf_report.py       # Markdown report generator
 │   ├── payload_mutator.py  # GA engine + deterministic mutations
 │   ├── memory.py           # ChromaDB RAG memory
-│   └── proxy_bridge.py     # Burp/ZAP integration
+│   ├── rule_inference_engine.py  # WAF rule inference from blocked responses
+│   ├── response_analyzer.py      # Response analysis utilities
+│   ├── browser_analyzer.py       # Browser-based analysis
+│   ├── proxy_bridge.py     # Burp/ZAP integration
+│   ├── web_search.py       # Online WAF bypass technique search
+│   └── sql_error_kb.py     # SQL error knowledge base
 ├── backend/
 │   ├── app.py              # FastAPI REST + WebSocket
 │   ├── models.py           # Pydantic request/response models
@@ -175,6 +179,11 @@ evored/
 │       ├── app/page.tsx    # Main page with state management
 │       ├── components/
 │       │   ├── Sidebar.tsx           # Configuration panel
+│       │   ├── GlassCard.tsx         # UI component
+│       │   ├── MatrixRain.tsx        # Cyberpunk effect
+│       │   ├── NeonTitle.tsx         # UI component
+│       │   ├── ParticleField.tsx     # Cyberpunk effect
+│       │   ├── StatusBadge.tsx       # Status indicator
 │       │   └── tabs/
 │       │       ├── AttackConsole.tsx  # Main attack dashboard
 │       │       ├── EvolutionLab.tsx   # GA visualization
@@ -184,6 +193,7 @@ evored/
 │           └── api.ts      # API + WebSocket client
 ├── docker-compose.yml      # Full stack: backend + frontend + DVWA + Coraza
 ├── waf-config/             # Coraza WAF configurations (PL1/3/5)
+├── bypassevo_chroma_db/    # ChromaDB persistence directory
 └── requirements.txt
 ```
 
@@ -197,3 +207,50 @@ evored/
 | DVWA XSS Stored | `/vulnerabilities/xss_s` | `txtName` | POST | XSS |
 | DVWA CMDi | `/vulnerabilities/exec` | `ip` | POST | CMDi |
 | Juice Shop Search | `/rest/products/search` | `q` | GET | SQLi |
+
+## Rate Limit System
+
+Per-stage rate limiting with exponential backoff and smart jitter:
+
+| Feature | Description |
+|---|---|
+| **Exponential Backoff** | On 429/block: `delay * multiplier^level`, capped at `max_backoff` |
+| **Smart Jitter** | Uniform (legacy) or Gaussian distribution `[base*0.6, base*1.4]` |
+| **Per-Stage Config** | Bypass stage can be aggressive, Exploit stage conservative |
+| **Real-time Visualization** | Current delay, backoff level, consecutive blocks shown in UI |
+| **Config Persistence** | Settings saved to localStorage, restored on reload |
+
+## Configuration Classes
+
+| Config | Description |
+|---|---|
+| `LLMConfig` | OpenAI-compatible API settings (Ollama, DeepSeek, vLLM, LM Studio) |
+| `TargetConfig` | Target URL, timeout, auth cookies, extra POST params |
+| `RateLimitConfig` | Request delay, jitter, backoff, block pause thresholds |
+| `GAConfig` | Population size, crossover/mutation rates, elite count |
+| `MemoryConfig` | ChromaDB RAG persistence directory |
+| `ProxyConfig` | Burp Suite / OWASP ZAP integration |
+| `WAFAnalyzerConfig` | Binary search depth, boundary probe limits |
+| `FastTestConfig` | Quick iteration mode (reduced delays, skip heavy analysis) |
+| `StealthConfig` | Decoy requests, UA rotation, payload shuffling |
+| `WebSearchConfig` | Online WAF bypass technique search settings |
+
+## Development Status
+
+**Completed:**
+- Two-stage pipeline (WAF Bypass → Exploit)
+- LangGraph state machine with conditional edges
+- WAF block analysis (binary search + boundary probes + LLM inference)
+- Genetic algorithm engine with fitness evaluation
+- ChromaDB RAG memory system
+- FastAPI backend with WebSocket
+- Next.js cyberpunk frontend with real-time visualization
+- Docker Compose deployment
+- Rate limiting with exponential backoff
+- Behavioral stealth (decoys, UA rotation)
+- Web search integration
+- Burp/ZAP proxy integration
+
+## License
+
+For security research purposes only.

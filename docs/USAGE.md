@@ -12,6 +12,9 @@
 - [GA 引擎配置](#ga-引擎配置)
 - [Rate Limit 配置](#rate-limit-配置)
 - [代理集成](#代理集成)
+- [行为隐身配置](#行为隐身配置)
+- [Web Search 配置](#web-search-配置)
+- [快速测试模式](#快速测试模式)
 - [故障排查](#故障排查)
 
 ---
@@ -367,6 +370,67 @@ Request Delay: 3.0s | Jitter: normal | Backoff on 429: 60s | Max Blocks: 5
 2. BypassEvo 中选择 `OWASP ZAP`，填入 API Key
 
 导入内容：历史请求/响应（最近 100 条）、自动提取参数、Cookie、注入点。
+
+---
+
+## 行为隐身配置
+
+对抗 WAF 行为分析的隐身设置：
+
+| 参数 | 默认值 | 说明 |
+|---|---|---|
+| Enable Stealth | `true` | 启用行为隐身 |
+| Decoy Ratio | `0.3` | 每 3 个攻击请求混入 1 个正常请求 |
+| Rotate User-Agent | `true` | 每次会话随机 User-Agent |
+| Random Referer | `true` | 添加随机 Referer 头 |
+| Shuffle Payloads | `true` | 随机化 payload 发送顺序 |
+
+### 原理
+
+- **Decoy Requests**: 混入正常请求降低异常流量比例
+- **UA Rotation**: 避免固定 User-Agent 被识别
+- **Payload Shuffling**: 避免按固定顺序发送 payload
+
+---
+
+## Web Search 配置
+
+自动搜索已知 WAF 绕过技术：
+
+| 参数 | 默认值 | 说明 |
+|---|---|---|
+| Enable Web Search | `true` | 启用在线搜索 |
+| Max Results | `5` | 每次查询最大结果数 |
+| Timeout | `10s` | 搜索请求超时 |
+| Cache TTL | `3600s` | 结果缓存时间（相同 WAF+会话） |
+
+### 工作流程
+
+1. 检测到 WAF 后，自动搜索 "<WAF名> bypass techniques"
+2. 搜索结果注入 LLM 提示词
+3. LLM 基于已知技术生成绕过 payload
+
+---
+
+## 快速测试模式
+
+用于快速迭代调试，减少延迟和跳过重型分析：
+
+| 参数 | 默认值 | 说明 |
+|---|---|---|
+| Enable Fast Test | `false` | 启用快速测试 |
+| Bypass Delay | `0.2s` | Bypass 阶段请求间隔（覆盖全局） |
+| Exploit Delay | `0.5s` | Exploit 阶段请求间隔（覆盖全局） |
+| Skip Binary Search | `true` | 跳过 WAF 二分搜索分析 |
+| Quick Verify Count | `1` | 绕过验证次数（默认 3） |
+| Lightweight Recon | `true` | 跳过深度侦察，仅基础探测 |
+| Skip Analyzer First N | `3` | 前 N 个 block 跳过分析 |
+
+### 适用场景
+
+- 本地靶场调试
+- 快速验证 payload 变更
+- CI/CD 集成测试
 
 ---
 
